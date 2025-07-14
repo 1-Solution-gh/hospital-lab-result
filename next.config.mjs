@@ -4,6 +4,15 @@ const nextConfig = {
     domains: ["i.imgur.com"],
     domains: ["api.qrserver.com"],
   },
+  async redirects() {
+    return [
+      {
+        source: '/certificate',
+        destination: '/report',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
