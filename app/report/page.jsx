@@ -1,25 +1,24 @@
-"use client"
+"use client";
 
-import { useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { User, Phone, MapPin, Building, Calendar, Shield, QrCode, CheckCircle } from "lucide-react"
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { User, Phone, MapPin, Building, Calendar, Shield, QrCode, CheckCircle } from "lucide-react";
 
-export default function CertificatePage() {
-  const [certificateData, setCertificateData] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const searchParams = useSearchParams()
-  const certificateId = searchParams.get("id")
+function CertificatePageContent() {
+  const [certificateData, setCertificateData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const searchParams = useSearchParams();
+  const certificateId = searchParams.get("id");
 
   useEffect(() => {
     const loadCertificateData = async () => {
       if (!certificateId) {
-        setLoading(false)
-        return
+        setLoading(false);
+        return;
       }
-
       try {
         const mockData = {
           id: certificateId,
@@ -37,27 +36,25 @@ export default function CertificatePage() {
             "Hepatitis B": "Negative",
             HIV: "Negative",
           },
-          passportPicture: "https://i.imgur.com/4s51hqy.jpeg", // Adjusted size for profile
-        }
-
+          passportPicture: "https://i.imgur.com/4s51hqy.jpeg",
+        };
         setTimeout(() => {
-          setCertificateData(mockData)
-          setLoading(false)
-        }, 800)
+          setCertificateData(mockData);
+          setLoading(false);
+        }, 800);
       } catch (err) {
-        setError("Failed to load certificate data")
-        setLoading(false)
+        setError("Failed to load certificate data");
+        setLoading(false);
       }
-    }
-
-    loadCertificateData()
-  }, [certificateId])
+    };
+    loadCertificateData();
+  }, [certificateId]);
 
   const isExpired = (expiryDate) => {
-    const [day, month, year] = expiryDate.split("/")
-    const expiry = new Date(Number.parseInt(year), Number.parseInt(month) - 1, Number.parseInt(day))
-    return expiry < new Date()
-  }
+    const [day, month, year] = expiryDate.split("/");
+    const expiry = new Date(Number.parseInt(year), Number.parseInt(month) - 1, Number.parseInt(day));
+    return expiry < new Date();
+  };
 
   if (!certificateId && !loading) {
     return (
@@ -83,7 +80,7 @@ export default function CertificatePage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   if (loading) {
@@ -94,7 +91,7 @@ export default function CertificatePage() {
           <p className="text-gray-600">Loading certificate...</p>
         </div>
       </div>
-    )
+    );
   }
 
   if (error || !certificateData) {
@@ -113,7 +110,7 @@ export default function CertificatePage() {
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
   return (
@@ -131,15 +128,6 @@ export default function CertificatePage() {
               <p className="text-sm text-gray-500">Certificate ID</p>
               <p className="font-mono text-lg font-semibold">{certificateData.id}</p>
             </div>
-            {/* <div className="flex gap-2">
-              <Badge variant={isExpired(certificateData.expiryDate) ? "destructive" : "default"} className="text-sm">
-                {isExpired(certificateData.expiryDate) ? "Expired" : "Valid"}
-              </Badge>
-              <Badge variant="outline" className="text-sm">
-                <Shield className="w-3 h-3 mr-1" />
-                Verified
-              </Badge>
-            </div> */}
           </div>
         </div>
 
@@ -207,21 +195,6 @@ export default function CertificatePage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Issue Date</label>
-                  <p className="text-lg">{certificateData.issueDate}</p>
-                </div>
-                <div>
-                  <label className="text-sm font-medium text-gray-500">Expiry Date</label>
-                  <p
-                    className={`text-lg font-semibold ${isExpired(certificateData.expiryDate) ? "text-red-600" : "text-green-600"}`}
-                  >
-                    {certificateData.expiryDate}
-                  </p>
-                </div>
-              </div> */}
-
               <div>
                 <label className="text-sm font-medium text-gray-500 mb-3 block">Lab Results</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -254,5 +227,13 @@ export default function CertificatePage() {
         </div>
       </div>
     </div>
-  )
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CertificatePageContent />
+    </Suspense>
+  );
 }
